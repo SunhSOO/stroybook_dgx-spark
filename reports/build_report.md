@@ -82,3 +82,52 @@ python -m pytest -q
 ### 8.5 비고
 
 pytest 캐시 디렉터리 권한 문제는 `pytest.ini`에서 테스트 탐색 범위를 `tests`로 제한하고 cacheprovider를 비활성화하여 해결하였다.
+
+## 9. llama.cpp 빌드 시도
+
+### 9.1 환경 확인
+
+```bash
+nvidia-smi
+```
+
+```text
+NVIDIA GeForce RTX 3080 Ti
+Driver Version: 591.86
+CUDA Version: 13.1
+```
+
+### 9.2 빌드 도구 확인
+
+```text
+Visual Studio 2022 Community MSVC 확인
+CMake 확인: Visual Studio 내장 CMake
+Ninja 확인: Visual Studio 내장 Ninja
+nvcc 확인: PATH에서 찾을 수 없음
+```
+
+### 9.3 CPU 빌드 시도 명령어
+
+```bash
+cmake -S external\llama.cpp -B external\llama.cpp\build-msvc -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=cl -DCMAKE_CXX_COMPILER=cl
+cmake --build external\llama.cpp\build-msvc --config Release -j 8
+```
+
+### 9.4 실행 결과
+
+```text
+-- The C compiler identification is unknown
+-- The CXX compiler identification is unknown
+CMakeConfigureLog.yaml: Compiler: cl
+The output was: no such file or directory
+```
+
+### 9.5 판단
+
+MSVC 개발 프롬프트에서 `cl.exe`는 확인되었으나, 현재 Codex 실행 경로에서 CMake의 컴파일러 식별 단계가 실패하였다. 또한 `nvcc`가 PATH에 없어 CUDA 빌드는 수행하지 못하였다.
+
+### 9.6 추가 조치 필요 사항
+
+- Visual Studio Developer PowerShell에서 직접 빌드 재시도
+- 가능하면 한글이 포함되지 않은 ASCII 경로에서 빌드
+- CUDA 빌드가 필요하면 CUDA Toolkit 및 `nvcc` PATH 설정 필요

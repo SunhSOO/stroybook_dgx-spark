@@ -6,3 +6,10 @@ pytest-cache-files-*/
 outputs/*
 !outputs/.gitkeep
 *.log
+external/
+models/
+pretrained_models/
+*.gguf
+*.safetensors
+*.pth
+.tmp/

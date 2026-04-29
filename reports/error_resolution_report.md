@@ -98,3 +98,33 @@ addopts = -p no:cacheprovider
 ```text
 2 passed in 0.27s
 ```
+
+## 10. 엔진 설치 및 다운로드 제한
+
+### 10.1 오류 개요
+
+외부 엔진 설치 및 모델 다운로드 과정에서 네트워크 소켓 권한과 임시 디렉터리 권한 제한이 발생하였다.
+
+### 10.2 발생 작업
+
+- VoxCPM2 모델 가중치 다운로드
+- ComfyUI 누락 의존성 설치
+- ComfyUI 전용 venv ensurepip
+- llama.cpp 빌드
+
+### 10.3 오류 메시지
+
+```text
+[WinError 10013] 액세스 권한에 의해 숨겨진 소켓에 액세스를 시도했습니다
+PermissionError: [Errno 13] Permission denied
+ModuleNotFoundError: No module named 'comfy_aimdo'
+-- The C compiler identification is unknown
+```
+
+### 10.4 원인 분석
+
+현재 Codex 실행 환경에서 외부 네트워크 소켓 접근과 일부 임시 디렉터리 쓰기 권한이 제한되어 있다. 또한 llama.cpp 빌드는 MSVC와 CMake가 설치되어 있음에도 CMake 컴파일러 식별 단계에서 실패하였다.
+
+### 10.5 해결 방법
+
+Codex 실행 환경에서는 권한 상승 요청이 사용 한도 문제로 거절되어 추가 설치를 완료하지 못하였다. 사용자는 로컬 PowerShell 또는 Visual Studio Developer PowerShell에서 `docs/engine_setup.md`의 재실행 명령을 수행해야 한다.
