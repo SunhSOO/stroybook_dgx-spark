@@ -1,0 +1,20 @@
+services:
+  api:
+    build:
+      context: .
+    image: ai-story-generator:latest
+    container_name: ai-story-api
+    ports:
+      - "8000:8000"
+    environment:
+      APP_ENV: docker
+      OUTPUT_BASE_URL: /outputs
+    volumes:
+      - ./outputs:/app/outputs
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
